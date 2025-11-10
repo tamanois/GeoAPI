@@ -1,0 +1,18 @@
+# Node/NestJS/TypeORM ignore rules
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.*.local
+*.sqlite
+*.db
+logs/
+*.log
+coverage/
+tmp/
+/.vscode/
+/.DS_Store
+/*.swp
+/*.swo
+npm-debug.log*
