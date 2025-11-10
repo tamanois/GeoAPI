@@ -5,10 +5,11 @@ export class AddRegionAndCityFields1660000000002 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE "regions" (
         "id" varchar PRIMARY KEY,
-        "name" varchar NOT NULL UNIQUE,
+        "name" varchar NOT NULL,
         "countryCode" varchar,
         "createdAt" datetime NOT NULL DEFAULT (datetime('now')),
-        "updatedAt" datetime NOT NULL DEFAULT (datetime('now'))
+        "updatedAt" datetime NOT NULL DEFAULT (datetime('now')),
+        UNIQUE ("name", "countryCode")
       );
     `);
     await queryRunner.query(`

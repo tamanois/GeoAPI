@@ -1,8 +1,23 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, UseGuards, Query } from '@nestjs/common';
 import { RegionsService } from '../services/regions.service';
 import { CreateRegionDto, RegionDto, UpdateRegionDto } from '../dto/region.dto';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiPropertyOptional, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyGuard } from '../guards/api-key.guard';
+
+export class RegionSearchParams {
+  @ApiPropertyOptional()
+  countryCode?: string;
+  @ApiPropertyOptional()
+  search?: string;
+  @ApiPropertyOptional()
+  sort?: string;
+  @ApiPropertyOptional()
+  order: 'ASC' | 'DESC' = 'ASC';
+  @ApiPropertyOptional()
+  limit?: number;
+  @ApiPropertyOptional()
+  offset?: number;
+}
 
 @ApiSecurity('api-key')
 @UseGuards(ApiKeyGuard)
@@ -11,8 +26,10 @@ export class RegionsController {
   constructor(private readonly regionsService: RegionsService) {}
 
   @Get()
-  async findAll() {
-    const regions = await this.regionsService.findAll();
+  async findAll(
+    @Query() searchParams: RegionSearchParams,
+  ) {
+    const regions = await this.regionsService.findAll(searchParams);
     return regions.map(r => RegionDto.fromEntity(r));
   }
 

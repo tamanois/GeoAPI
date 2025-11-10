@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, Logger, 
-  UseGuards
- } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, Logger, UseGuards, Query } from '@nestjs/common';
 import { CountriesService } from '../services/countries.service';
 import { CreateCountryDto, UpdateCountryDto, CountryDto } from '../dto/country.dto';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, ApiSecurity } from '@nestjs/swagger';
 import { ApiKeyGuard } from '../guards/api-key.guard';
 
+class SearchParams {
+  @ApiPropertyOptional()
+  search?: string;
+  @ApiPropertyOptional()
+  sort?: string;
+  @ApiPropertyOptional()
+  order: 'ASC' | 'DESC' = 'ASC';
+  @ApiPropertyOptional()
+  limit?: number;
+  @ApiPropertyOptional()
+  offset?: number;
+}
 
 @ApiSecurity('api-key')
 @UseGuards(ApiKeyGuard)
@@ -16,8 +26,10 @@ export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 
   @Get()
-  async findAll() {
-    const countries = await this.countriesService.findAll();
+  async findAll(
+    @Query() searchParams: SearchParams,
+  ) {
+    const countries = await this.countriesService.findAllMatching(searchParams);
     return countries.map(CountryDto.fromEntity);
   }
 

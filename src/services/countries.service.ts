@@ -12,8 +12,26 @@ export class CountriesService {
     private readonly countryRepository: Repository<Country>,
   ) {}
 
-  async findAll(): Promise<Country[]> {
+  async findAllMatching(options?: { search?: string; sort?: string; order?: 'ASC' | 'DESC'; limit?: number; offset?: number }): Promise<Country[]> {
     this.logger.log('Fetching all countries');
+    const qb = this.countryRepository.createQueryBuilder('country');
+    if (options?.search) {
+      qb.where('(country.name LIKE :search OR country.code LIKE :search)', { search: `%${options.search}%` });
+    }
+    if (options?.sort) {
+      qb.orderBy(`country.${options.sort}`, options.order || 'ASC');
+    }
+
+    qb.limit(options?.limit || 50);
+  
+    if (options?.offset) {
+      qb.offset(options.offset);
+    }
+    return qb.getMany();
+  }
+
+  async findAll(): Promise<Country[]> {
+    this.logger.log(`Fetching all countries`);
     return this.countryRepository.find();
   }
 

@@ -1,8 +1,24 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, Logger, UseGuards, Query } from '@nestjs/common';
 import { CitiesService } from '../services/cities.service';
 import { CreateCityDto, UpdateCityDto, CityDto } from '../dto/city.dto';
 import { ApiKeyGuard } from '../guards/api-key.guard';
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiPropertyOptional, ApiSecurity } from '@nestjs/swagger';
+
+
+export class CitySearchParams {
+  @ApiPropertyOptional()
+  search?: string;
+  @ApiPropertyOptional()
+  sort?: string;
+  @ApiPropertyOptional()
+  order: 'ASC' | 'DESC' = 'ASC';
+  @ApiPropertyOptional()
+  limit?: number;
+  @ApiPropertyOptional()
+  offset?: number;
+  @ApiPropertyOptional()
+  countryCode?: string;
+}
 
 @ApiSecurity('api-key')
 @UseGuards(ApiKeyGuard)
@@ -13,8 +29,10 @@ export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
   @Get()
-  async findAll() {
-    const cities = await this.citiesService.findAll();
+  async findAll(
+    @Query() searchParams: CitySearchParams,
+  ) {
+    const cities = await this.citiesService.findAll(searchParams);
     return cities.map(CityDto.fromEntity);
   }
 

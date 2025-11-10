@@ -5,7 +5,7 @@ export class Region {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
   name!: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -16,4 +16,5 @@ export class Region {
 
   @UpdateDateColumn({ type: 'datetime' })
   updatedAt!: Date;
+  // Composite unique constraint for (name, countryCode)
 }
