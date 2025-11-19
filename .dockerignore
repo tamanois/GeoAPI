@@ -1,0 +1,46 @@
+# Node modules (commented out to allow for Dockerfile.prebuilt)
+# Uncomment if using standard Dockerfile that installs dependencies during build
+# node_modules/
+npm-debug.log*
+
+# Build outputs (commented out to allow dist/ for Dockerfile.simple)
+# If using standard Dockerfile, uncomment the dist/ line below
+# dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.sqlite
+*.db
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+test/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+tmp/
+*.md
+!README.md
+.github/

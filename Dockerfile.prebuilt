@@ -1,0 +1,35 @@
+# Ultra-simple Dockerfile for GeoAPI
+# Copies pre-built dist and node_modules from local build
+# Prerequisites: Run locally first:
+#   npm install
+#   npm run build
+#   npm prune --production
+
+FROM node:20-slim
+
+WORKDIR /app
+
+# Copy everything needed from local build
+COPY package*.json ./
+COPY dist ./dist
+COPY node_modules ./node_modules
+COPY data-source.ts ./data-source.ts
+COPY ormconfig.js ./ormconfig.js
+COPY worldcities.csv ./worldcities.csv
+
+# Create directory for database
+RUN mkdir -p /app/data
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Expose the application port
+EXPOSE 3000
+
+# Health check - check if the server is responding (404 is OK, it means the server is up)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api', (r) => {process.exit((r.statusCode === 200 || r.statusCode === 404) ? 0 : 1)})"
+
+# Start the application
+CMD ["node", "dist/src/main.js"]
