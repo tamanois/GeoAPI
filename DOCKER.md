@@ -13,6 +13,29 @@ The Docker setup consists of two services:
 - Docker (version 20.10 or higher)
 - Docker Compose (version 1.29 or higher)
 
+## Building the Docker Image
+
+### Standard Build
+
+The Dockerfile is configured to build the application from source:
+
+```bash
+docker-compose build
+```
+
+### Alternative: Build with Pre-compiled Code
+
+If you encounter network issues during Docker build (common in CI environments), you can build the application locally first:
+
+```bash
+# Build locally
+npm install
+npm run build
+
+# Then build Docker image (it will use the existing dist folder)
+docker-compose build
+```
+
 ## Quick Start
 
 1. **Build and start the containers:**

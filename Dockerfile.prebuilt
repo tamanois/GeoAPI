@@ -1,37 +1,21 @@
-# Dockerfile for GeoAPI
-# This Dockerfile is optimized for environments with network restrictions
-# It uses a Debian-based image which has better package availability
+# Ultra-simple Dockerfile for GeoAPI
+# Copies pre-built dist and node_modules from local build
+# Prerequisites: Run locally first:
+#   npm install
+#   npm run build
+#   npm prune --production
 
 FROM node:20-slim
 
 WORKDIR /app
 
-# Install build dependencies and Python for native modules
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy package files
+# Copy everything needed from local build
 COPY package*.json ./
-
-# Install all dependencies first
-RUN npm install --no-audit --no-fund
-
-# Copy application source
-COPY src ./src
-COPY tsconfig.json ./tsconfig.json
+COPY dist ./dist
+COPY node_modules ./node_modules
 COPY data-source.ts ./data-source.ts
 COPY ormconfig.js ./ormconfig.js
 COPY worldcities.csv ./worldcities.csv
-
-# Build the application
-RUN npm run build
-
-# Remove devDependencies to reduce image size
-RUN npm prune --production
 
 # Create directory for database
 RUN mkdir -p /app/data
