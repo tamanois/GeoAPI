@@ -40,10 +40,11 @@ export class CitiesService {
       }
     }
     if (options?.sort) {
-      qb.orderBy(`city.${options.sort}`, options.order || 'ASC');
+      const order = options.order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+      qb.orderBy(`city.${options.sort}`, order);
     }
     let limit = options?.limit;
-    if (limit && limit > 100) {
+    if (limit && limit > 100 && !options?.countryCode) {
       limit = 100;
     }
 
